@@ -23,7 +23,6 @@ def get_users():
         traceback.print_exc()
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
     if(success):
-        print(Response.data)
         return Response(users_json, mimetype="application/json", status=200)
     else:
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
