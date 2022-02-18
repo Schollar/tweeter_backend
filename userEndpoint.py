@@ -2,17 +2,6 @@ import mariadb as db
 import dbhandler as dbh
 
 
-class userObj:
-    def __init__(self, id, email, username, bio, birthdate, imageUrl, bannerUrl):
-        self.id = id
-        self.email = email
-        self.username = username
-        self.bio = bio
-        self.birthdate = birthdate
-        self.imageUrl = imageUrl
-        self.bannerUrl = bannerUrl
-
-
 def get_users(userId):
     users = []
     conn, cursor = dbh.db_connect()
