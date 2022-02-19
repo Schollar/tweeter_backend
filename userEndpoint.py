@@ -42,3 +42,53 @@ def get_users(userId):
         print('Error running DB query')
     dbh.db_disconnect(conn, cursor)
     return True, users_objects
+# I need to check if any values of user object is None, and update based on what has value and skip what does not.
+
+
+def patch_user(loginToken, bio, birthdate, imageUrl, bannerUrl, email, username):
+    user = []
+    conn, cursor = dbh.db_connect()
+    try:
+        if(bio != None):
+            cursor.execute(
+                "UPDATE `user` inner join user_session on `user`.id = user_session.user_id SET bio = ? WHERE logintoken = ?", [bio, loginToken])
+            conn.commit()
+        if(birthdate != None):
+            cursor.execute(
+                "UPDATE `user` inner join user_session on `user`.id = user_session.user_id SET birthdate = ? WHERE logintoken = ?", [birthdate, loginToken])
+            conn.commit()
+        if(imageUrl != None):
+            cursor.execute(
+                "UPDATE `user` inner join user_session on `user`.id = user_session.user_id SET imageUrl = ? WHERE logintoken = ?", [imageUrl, loginToken])
+            conn.commit()
+        if(bannerUrl != None):
+            cursor.execute(
+                "UPDATE `user` inner join user_session on `user`.id = user_session.user_id SET bannerUrl = ? WHERE logintoken = ?", [bannerUrl, loginToken])
+            conn.commit()
+        if(email != None):
+            cursor.execute(
+                "UPDATE `user` inner join user_session on `user`.id = user_session.user_id SET email = ? WHERE logintoken = ?", [email, loginToken])
+            conn.commit()
+        if(username != None):
+            cursor.execute(
+                "UPDATE `user` inner join user_session on `user`.id = user_session.user_id SET username = ? WHERE logintoken = ?", [username, loginToken])
+            conn.commit()
+        cursor.execute(
+            "SELECT `user`.id, email, username, bio, birthdate, imageUrl, bannerUrl FROM user inner join user_session on `user`.id = user_session.user_id WHERE logintoken = ?", [loginToken])
+        user = cursor.fetchone()
+        user = {
+            'userId': user[0],
+            'email': user[1],
+            'username': user[2],
+            'bio': user[3],
+            'birthdate': user[4],
+            'imageUrl': user[5],
+            'bannerUrl': user[6]
+        }
+        return True, user
+    except db.OperationalError:
+        print('Something went  wrong with the db!')
+    except db.ProgrammingError:
+        print('Error running DB query')
+    dbh.db_disconnect(conn, cursor)
+    return True, user

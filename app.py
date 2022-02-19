@@ -2,6 +2,7 @@ from flask import Flask, request, Response
 import json
 import userEndpoint as ue
 import traceback
+import hashlib
 
 import sys
 app = Flask(__name__)
@@ -24,6 +25,56 @@ def get_users():
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
     if(success):
         return Response(users_json, mimetype="application/json", status=200)
+    else:
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+
+
+@app.patch('/api/users')
+def patch_user():
+    user = None
+    loginToken = None
+    bio = None
+    birthdate = None
+    imageUrl = None
+    bannerUrl = None
+    email = None
+    username = None
+    success = False
+    try:
+        loginToken = request.json.get('logintoken')
+        bio = request.json.get('bio')
+        birthdate = request.json.get('birthdate')
+        imageUrl = request.json.get('imageUrl')
+        bannerUrl = request.json.get('bannerUrl')
+        email = request.json.get('email')
+        username = request.json.get('username')
+        success, user = ue.patch_user(
+            loginToken, bio, birthdate, imageUrl, bannerUrl, email, username)
+        user_json = json.dumps(user, default=str)
+    except:
+        traceback.print_exc()
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+    if(success):
+        return Response(user_json, mimetype="application/json", status=200)
+    else:
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+
+
+@ app.delete('/api/users')
+def delete_user():
+    logintoken = None
+    password = None
+    success = False
+    try:
+        logintoken = request.json('loginToken')
+        password = request.json('password')
+        pass_hash = hashlib.sha512(password.encode()).hexdigest()
+        success = ue.get_users(logintoken, password)
+    except:
+        traceback.print_exc()
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+    if(success):
+        return Response
     else:
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
 
