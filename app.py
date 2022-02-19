@@ -3,10 +3,14 @@ import json
 import userEndpoint as ue
 import traceback
 import hashlib
+import secrets
 
 import sys
 app = Flask(__name__)
 
+
+def create_salt():
+    return secrets.token_urlsafe(10)
 # Function that takes in no user input, runs the dbhandler get users which gets all the users from the db and returns them in the response
 
 
@@ -63,13 +67,16 @@ def patch_user():
 @ app.delete('/api/users')
 def delete_user():
     logintoken = None
+    salt = None
     password = None
     success = False
     try:
         logintoken = request.json('loginToken')
         password = request.json('password')
+        salt = create_salt()
+        password = salt + password
         pass_hash = hashlib.sha512(password.encode()).hexdigest()
-        success = ue.get_users(logintoken, password)
+        success = ue.get_users(logintoken, pass_hash)
     except:
         traceback.print_exc()
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
