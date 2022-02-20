@@ -1,5 +1,6 @@
 import mariadb as db
 import dbhandler as dbh
+import userLogin as ul
 
 
 def get_users(userId):
@@ -84,6 +85,45 @@ def patch_user(loginToken, bio, birthdate, imageUrl, bannerUrl, email, username)
             'birthdate': user[4],
             'imageUrl': user[5],
             'bannerUrl': user[6]
+        }
+        return True, user
+    except db.OperationalError:
+        print('Something went  wrong with the db!')
+    except db.ProgrammingError:
+        print('Error running DB query')
+    dbh.db_disconnect(conn, cursor)
+    return True, user
+
+
+def post_user(bio, birthdate, imageUrl, bannerUrl, email, username, pass_hash, salt):
+    user = []
+    conn, cursor = dbh.db_connect()
+    try:
+        cursor.execute(
+            "INSERT INTO `user` (bio, birthdate, email, username, password, salt) VALUES (?, ?, ?, ?, ?, ?)", [bio, birthdate, email, username, pass_hash, salt])
+        conn.commit()
+        if(imageUrl != None):
+            cursor.execute(
+                "UPDATE `user` SET imageUrl = ? WHERE username = ?", [imageUrl, username])
+            conn.commit()
+        if(bannerUrl != None):
+            cursor.execute(
+                "UPDATE `user` SET imageUrl = ? WHERE logintoken = ?", [bannerUrl, username])
+            conn.commit()
+        user = ul.post_login(email, None, pass_hash)
+        login_token = user[1]['loginToken']
+        cursor.execute(
+            "SELECT `user`.id, email, username, bio, birthdate, imageUrl, bannerUrl FROM `user` WHERE username = ?", [username])
+        user = cursor.fetchone()
+        user = {
+            'userId': user[0],
+            'email': user[1],
+            'username': user[2],
+            'bio': user[3],
+            'birthdate': user[4],
+            'imageUrl': user[5],
+            'bannerUrl': user[6],
+            'loginToken': login_token
         }
         return True, user
     except db.OperationalError:

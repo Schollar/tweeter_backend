@@ -86,6 +86,40 @@ def delete_user():
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
 
 
+@app.post('/api/users')
+def post_user():
+    user = None
+    bio = None
+    birthdate = None
+    imageUrl = None
+    bannerUrl = None
+    email = None
+    username = None
+    password = None
+    success = False
+    try:
+        bio = request.json.get('bio')
+        birthdate = request.json.get('birthdate')
+        imageUrl = request.json.get('imageUrl')
+        bannerUrl = request.json.get('bannerUrl')
+        email = request.json.get('email')
+        username = request.json.get('username')
+        password = request.json.get('password')
+        salt = create_salt()
+        password = salt + password
+        pass_hash = hashlib.sha512(password.encode()).hexdigest()
+        success, user = ue.post_user(
+            bio, birthdate, imageUrl, bannerUrl, email, username, pass_hash, salt)
+        user_json = json.dumps(user, default=str)
+    except:
+        traceback.print_exc()
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+    if(success):
+        return Response(user_json, mimetype="application/json", status=200)
+    else:
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+
+
 # Checking to see if a mode was passed to the script
 if(len(sys.argv) > 1):
     mode = sys.argv[1]
