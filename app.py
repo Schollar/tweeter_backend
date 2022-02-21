@@ -71,17 +71,14 @@ def delete_user():
     password = None
     success = False
     try:
-        logintoken = request.json('loginToken')
-        password = request.json('password')
-        salt = create_salt()
-        password = salt + password
-        pass_hash = hashlib.sha512(password.encode()).hexdigest()
-        success = ue.get_users(logintoken, pass_hash)
+        logintoken = request.json.get('loginToken')
+        password = request.json.get('password')
+        success = ue.delete_user(logintoken, password)
     except:
         traceback.print_exc()
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
     if(success):
-        return Response
+        return Response(None, status=200)
     else:
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
 
