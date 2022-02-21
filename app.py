@@ -4,6 +4,7 @@ import userEndpoint as ue
 import traceback
 import hashlib
 import secrets
+import userLogin as ul
 
 import sys
 app = Flask(__name__)
@@ -64,7 +65,7 @@ def patch_user():
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
 
 
-@ app.delete('/api/users')
+@app.delete('/api/users')
 def delete_user():
     logintoken = None
     salt = None
@@ -113,6 +114,22 @@ def post_user():
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
     if(success):
         return Response(user_json, mimetype="application/json", status=200)
+    else:
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+
+
+@app.delete('/api/login')
+def delete_login():
+    logintoken = None
+    success = False
+    try:
+        logintoken = request.json.get('logintoken')
+        success = ul.delete_login(logintoken)
+    except:
+        traceback.print_exc()
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+    if(success):
+        return Response(None, status=200)
     else:
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
 

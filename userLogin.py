@@ -2,6 +2,20 @@ import mariadb as db
 import dbhandler as dbh
 
 
+def delete_login(loginToken):
+    conn, cursor = dbh.db_connect()
+    try:
+        cursor.execute(
+            "DELETE FROM user_session WHERE logintoken = ? ", [loginToken])
+        conn.commit()
+    except db.OperationalError:
+        print('Something went  wrong with the db!')
+    except db.ProgrammingError:
+        print('Error running DB query')
+    dbh.db_disconnect(conn, cursor)
+    return True
+
+
 def post_login(email, username, pass_hash):
     user = []
     userId = None
