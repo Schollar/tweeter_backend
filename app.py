@@ -2,6 +2,7 @@ from flask import Flask
 import Endpoints.users as users
 import Endpoints.login as login
 import Endpoints.follows as follows
+import Endpoints.followers as followers
 
 import sys
 app = Flask(__name__)
@@ -44,6 +45,11 @@ def post_follow():
 @app.delete('/api/follows')
 def delete_follow():
     return follows.delete()
+
+
+@app.get('/api/followers')
+def get_followers():
+    return followers.get()
 ######## LOGIN ENDPOINT #######
 
 
