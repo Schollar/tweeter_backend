@@ -3,6 +3,7 @@ import Endpoints.users as users
 import Endpoints.login as login
 import Endpoints.follows as follows
 import Endpoints.followers as followers
+import Endpoints.tweets as tweets
 
 import sys
 app = Flask(__name__)
@@ -61,6 +62,13 @@ def delete_login():
 @app.post('/api/login')
 def post_login():
     return login.post()
+
+#####Tweets Endpoint####
+
+
+@app.get('/api/tweets')
+def get_tweets():
+    return tweets.get()
 
 
 # Checking to see if a mode was passed to the script
