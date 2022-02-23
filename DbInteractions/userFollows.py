@@ -4,7 +4,6 @@ import DbInteractions.dbhandler as dbh
 
 
 def get_follows(userId):
-    users = []
     follows_list = []
     conn, cursor = dbh.db_connect()
     try:
@@ -31,7 +30,6 @@ def get_follows(userId):
 
 
 def post_follow(logintoken, followId):
-    userId = None
     conn, cursor = dbh.db_connect()
     try:
         cursor.execute(
@@ -40,6 +38,25 @@ def post_follow(logintoken, followId):
         userId = userId[0]
         cursor.execute(
             "INSERT INTO follow (user_id, follow_id) VALUES (?, ?)", [userId, followId])
+        conn.commit()
+    except db.OperationalError:
+        print('Something went  wrong with the db!')
+    except db.ProgrammingError:
+        print('Error running DB query')
+    dbh.db_disconnect(conn, cursor)
+    return True
+
+
+def delete_follow(logintoken, followId):
+    userId = None
+    conn, cursor = dbh.db_connect()
+    try:
+        cursor.execute(
+            "SELECT `user`.id FROM user inner join user_session on `user`.id = user_session.user_id WHERE logintoken = ?", [logintoken])
+        userId = cursor.fetchone()
+        userId = userId[0]
+        cursor.execute(
+            "DELETE FROM follow WHERE user_id = ? and follow_id = ?", [userId, followId])
         conn.commit()
     except db.OperationalError:
         print('Something went  wrong with the db!')

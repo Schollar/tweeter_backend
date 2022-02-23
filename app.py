@@ -39,6 +39,11 @@ def get_follows():
 @app.post('/api/follows')
 def post_follow():
     return follows.post()
+
+
+@app.delete('/api/follows')
+def delete_follow():
+    return follows.delete()
 ######## LOGIN ENDPOINT #######
 
 
