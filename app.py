@@ -34,6 +34,11 @@ def post_user():
 @app.get('/api/follows')
 def get_follows():
     return follows.get()
+
+
+@app.post('/api/follows')
+def post_follow():
+    return follows.post()
 ######## LOGIN ENDPOINT #######
 
 

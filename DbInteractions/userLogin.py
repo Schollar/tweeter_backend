@@ -50,7 +50,6 @@ def post_login(email, username, pass_hash):
             'bannerUrl': user[6],
             'loginToken': user[7]
         }
-        return True, user
     except db.OperationalError:
         print('Something went  wrong with the db!')
     except db.ProgrammingError:

@@ -22,10 +22,28 @@ def get_follows(userId):
                     'imageUrl': user[5],
                     'bannerUrl': user[6]
                 })
-        return True, follows_list
     except db.OperationalError:
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
         print('Error running DB query')
     dbh.db_disconnect(conn, cursor)
     return True, follows_list
+
+
+def post_follow(logintoken, followId):
+    userId = None
+    conn, cursor = dbh.db_connect()
+    try:
+        cursor.execute(
+            "SELECT `user`.id FROM user inner join user_session on `user`.id = user_session.user_id WHERE logintoken = ?", [logintoken])
+        userId = cursor.fetchone()
+        userId = userId[0]
+        cursor.execute(
+            "INSERT INTO follow (user_id, follow_id) VALUES (?, ?)", [userId, followId])
+        conn.commit()
+    except db.OperationalError:
+        print('Something went  wrong with the db!')
+    except db.ProgrammingError:
+        print('Error running DB query')
+    dbh.db_disconnect(conn, cursor)
+    return True

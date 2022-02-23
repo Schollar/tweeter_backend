@@ -21,6 +21,7 @@ def get_users(userId):
                 'imageUrl': users[5],
                 'bannerUrl': users[6]
             }
+            dbh.db_disconnect(conn, cursor)
             return True, users
         else:
             cursor.execute(
@@ -37,12 +38,13 @@ def get_users(userId):
                         'imageUrl': user[5],
                         'bannerUrl': user[6]
                     })
+            dbh.db_disconnect(conn, cursor)
+            return True, users_objects
     except db.OperationalError:
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
         print('Error running DB query')
-    dbh.db_disconnect(conn, cursor)
-    return True, users_objects
+
 # I need to check if any values of user object is None, and update based on what has value and skip what does not.
 
 
@@ -86,7 +88,6 @@ def patch_user(loginToken, bio, birthdate, imageUrl, bannerUrl, email, username)
             'imageUrl': user[5],
             'bannerUrl': user[6]
         }
-        return True, user
     except db.OperationalError:
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
@@ -125,7 +126,6 @@ def post_user(bio, birthdate, imageUrl, bannerUrl, email, username, pass_hash, s
             'bannerUrl': user[6],
             'loginToken': login_token
         }
-        return True, user
     except db.OperationalError:
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
