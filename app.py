@@ -6,14 +6,20 @@ import hashlib
 import secrets
 import userLogin as ul
 import userFollows as uf
+import dbhandler as dbh
 
 import sys
 app = Flask(__name__)
 
+# Function to create password salts
+
 
 def create_salt():
     return secrets.token_urlsafe(10)
-# Function that takes in no user input, runs the dbhandler get users which gets all the users from the db and returns them in the response
+
+######### USER ENDPOINT ########
+
+# This endpoint takes in an optional user id. If no Id is sent it will get ALL users from DB back. If ID is sent only info about that user is sent back.
 
 
 @app.get('/api/users')
@@ -27,12 +33,13 @@ def get_users():
         success, user_list = ue.get_users(user_id)
         users_json = json.dumps(user_list, default=str)
     except:
-        traceback.print_exc()
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
     if(success):
         return Response(users_json, mimetype="application/json", status=200)
     else:
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+
+# This endpoint will update user information based on what is sent to it. All optional, you can send info seperatly or all at once.
 
 
 @app.patch('/api/users')
@@ -58,26 +65,27 @@ def patch_user():
             loginToken, bio, birthdate, imageUrl, bannerUrl, email, username)
         user_json = json.dumps(user, default=str)
     except:
-        traceback.print_exc()
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
     if(success):
         return Response(user_json, mimetype="application/json", status=200)
     else:
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
 
+# This endpoint will delete a user from the DB. it takes in a password and login token, and if matching will return nothing indicating user no longer exits on planet.
+
 
 @app.delete('/api/users')
 def delete_user():
     logintoken = None
-    salt = None
     password = None
+    pass_hash = None
     success = False
     try:
         logintoken = request.json.get('loginToken')
         password = request.json.get('password')
-        success = ue.delete_user(logintoken, password)
+        pass_hash = dbh.get_password(password, None, None, logintoken)
+        success = ue.delete_user(logintoken, pass_hash)
     except:
-        traceback.print_exc()
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
     if(success):
         return Response(None, status=200)
@@ -119,22 +127,6 @@ def post_user():
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
 
 
-@app.delete('/api/login')
-def delete_login():
-    logintoken = None
-    success = False
-    try:
-        logintoken = request.json.get('logintoken')
-        success = ul.delete_login(logintoken)
-    except:
-        traceback.print_exc()
-        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
-    if(success):
-        return Response(None, status=200)
-    else:
-        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
-
-
 @app.get('/api/follows')
 def get_follows():
     user_list = None
@@ -150,6 +142,51 @@ def get_follows():
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
     if(success):
         return Response(users_json, mimetype="application/json", status=200)
+    else:
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+
+######## LOGIN ENDPOINT #######
+
+# Delete endpoint, takes in a login token, upon success it deletes row from user session table(logs user out)
+
+
+@app.delete('/api/login')
+def delete_login():
+    logintoken = None
+    success = False
+    try:
+        logintoken = request.json.get('logintoken')
+        success = ul.delete_login(logintoken)
+    except:
+        traceback.print_exc()
+        return Response("Something went wrong with logging out", mimetype="application/json", status=400)
+    if(success):
+        return Response(None, status=200)
+    else:
+        return Response("Something went wrong with logging out", mimetype="application/json", status=400)
+
+
+@app.post('/api/login')
+def post_login():
+    email = None
+    username = None
+    password = None
+    pass_hash = None
+    logintoken = None
+    success = False
+    try:
+        email = request.json.get('email')
+        username = request.json.get('username')
+        password = request.json.get('password')
+        pass_hash = dbh.get_password(password, email, username, logintoken)
+        success, user = ul.post_login(
+            email, username, pass_hash)
+        user_json = json.dumps(user, default=str)
+    except:
+        traceback.print_exc()
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+    if(success):
+        return Response(user_json, mimetype="application/json", status=200)
     else:
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
 

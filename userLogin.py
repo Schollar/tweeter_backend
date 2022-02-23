@@ -33,6 +33,7 @@ def post_login(email, username, pass_hash):
             cursor.execute(
                 "SELECT `user`.id FROM `user` WHERE username = ? and password = ?", [username, pass_hash])
             userId = cursor.fetchone()
+            userId = userId[0]
             cursor.execute(
                 "INSERT INTO user_session (user_id) VALUES (?)", [userId])
             conn.commit()

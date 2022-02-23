@@ -1,5 +1,6 @@
 import mariadb as db
 import dbcreds
+import hashlib
 
 # Connect function that starts a DB connection and creates a cursor
 
@@ -28,3 +29,38 @@ def db_disconnect(conn, cursor):
         conn.close()
     except:
         print('Error closing connection')
+
+
+def get_password(password, email, username, logintoken):
+    salt = None
+    pass_hash = None
+    conn, cursor = db_connect()
+    try:
+        if(logintoken != None):
+            cursor.execute(
+                "SELECT salt FROM `user` inner join user_session on user_session.user_id = `user`.id WHERE logintoken = ?", [
+                    logintoken]
+            )
+            salt = cursor.fetchone()
+            password = salt[0] + password
+            pass_hash = hashlib.sha512(password.encode()).hexdigest()
+        if(email != None):
+            cursor.execute(
+                "SELECT salt FROM `user`  WHERE email = ?", [email]
+            )
+            salt = cursor.fetchone()
+            password = salt[0] + password
+            pass_hash = hashlib.sha512(password.encode()).hexdigest()
+        if(username != None):
+            cursor.execute(
+                "SELECT salt FROM `user`  WHERE username = ?", [username]
+            )
+            salt = cursor.fetchone()
+            password = salt[0] + password
+            pass_hash = hashlib.sha512(password.encode()).hexdigest()
+    except db.OperationalError:
+        print('Something went  wrong with the db!')
+    except db.ProgrammingError:
+        print('Error running DB query')
+    db_disconnect(conn, cursor)
+    return pass_hash

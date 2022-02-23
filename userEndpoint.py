@@ -135,17 +135,9 @@ def post_user(bio, birthdate, imageUrl, bannerUrl, email, username, pass_hash, s
     return True, user
 
 
-def delete_user(loginToken, password):
-    salt = None
+def delete_user(loginToken, pass_hash):
     conn, cursor = dbh.db_connect()
     try:
-        cursor.execute(
-            "SELECT salt FROM `user` inner join user_session on user_session.user_id = `user`.id WHERE logintoken = ?", [
-                loginToken]
-        )
-        salt = cursor.fetchone()
-        password = salt[0] + password
-        pass_hash = hashlib.sha512(password.encode()).hexdigest()
         cursor.execute(
             "DELETE `user` FROM `user` inner join user_session on `user`.id = user_session.user_id WHERE password = ? and logintoken = ? ", [pass_hash, loginToken])
         conn.commit()
