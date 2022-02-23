@@ -71,6 +71,11 @@ def get_tweets():
     return tweets.get()
 
 
+@app.post('/api/tweets')
+def post_tweet():
+    return tweets.post()
+
+
 # Checking to see if a mode was passed to the script
 if(len(sys.argv) > 1):
     mode = sys.argv[1]

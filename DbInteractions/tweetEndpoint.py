@@ -45,3 +45,34 @@ def get_tweets(userId):
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
         print('Error running DB query')
+
+
+def post_tweet(logintoken, content, imageUrl):
+    tweet = {}
+    conn, cursor = dbh.db_connect()
+    try:
+        cursor.execute(
+            "SELECT `user`.id FROM user inner join user_session on `user`.id = user_session.user_id WHERE logintoken = ?", [logintoken])
+        userId = cursor.fetchone()
+        userId = userId[0]
+        cursor.execute(
+            "INSERT INTO tweet (userId, content, imageUrl) VALUES (?, ?, ?)", [userId, content, imageUrl])
+        conn.commit()
+        cursor.execute(
+            "SELECT tweet.id, `user`.id, username, `user`.imageUrl, content, created_at, tweet.imageUrl FROM `user` inner join tweet on tweet.userId = `user`.id WHERE content = ?", [content])
+        tweet = cursor.fetchone()
+        tweet = {
+            'tweetId': tweet[0],
+            'userId': tweet[1],
+            'username': tweet[2],
+            'userImageUrl': tweet[3],
+            'content': tweet[4],
+            'createdAt': tweet[5],
+            'imageUrl': tweet[6]
+        }
+    except db.OperationalError:
+        print('Something went  wrong with the db!')
+    except db.ProgrammingError:
+        print('Error running DB query')
+    dbh.db_disconnect(conn, cursor)
+    return True, tweet
