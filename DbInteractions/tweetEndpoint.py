@@ -76,3 +76,35 @@ def post_tweet(logintoken, content, imageUrl):
         print('Error running DB query')
     dbh.db_disconnect(conn, cursor)
     return True, tweet
+
+
+def patch_tweet(loginToken, tweetId, content, imageUrl):
+    tweet = {}
+    conn, cursor = dbh.db_connect()
+    try:
+        sql = "UPDATE tweet inner join user_session on tweet.userId = user_session.user_id SET WHERE logintoken = ? and tweet.id = ?"
+        params = [loginToken, tweetId]
+        if(imageUrl != None):
+            sql = sql.replace("SET", "SET imageUrl = ?,")
+            params.insert(0, imageUrl)
+        if(content != None):
+            sql = sql.replace("SET", "SET content = ?,")
+            params.insert(0, content)
+        sql = sql.replace("?, WHERE", "? WHERE")
+        cursor.execute(
+            sql, params)
+        conn.commit()
+        cursor.execute(
+            "SELECT tweet.id, content, imageUrl FROM tweet WHERE tweet.id = ?", [tweetId])
+        tweet = cursor.fetchone()
+        tweet = {
+            'tweetId': tweet[0],
+            'content': tweet[1],
+            'imageUrl': tweet[2],
+        }
+    except db.OperationalError:
+        print('Something went  wrong with the db!')
+    except db.ProgrammingError:
+        print('Error running DB query')
+    dbh.db_disconnect(conn, cursor)
+    return True, tweet

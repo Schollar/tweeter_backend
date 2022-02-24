@@ -63,7 +63,7 @@ def delete_login():
 def post_login():
     return login.post()
 
-#####Tweets Endpoint####
+#####TWEETS Endpoint####
 
 
 @app.get('/api/tweets')
@@ -74,6 +74,11 @@ def get_tweets():
 @app.post('/api/tweets')
 def post_tweet():
     return tweets.post()
+
+
+@app.patch('/api/tweets')
+def patch_tweet():
+    return tweets.patch()
 
 
 # Checking to see if a mode was passed to the script

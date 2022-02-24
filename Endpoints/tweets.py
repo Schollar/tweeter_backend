@@ -36,3 +36,21 @@ def post():
         return Response(tweet_json, mimetype="application/json", status=200)
     else:
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+
+
+def patch():
+    tweet_json = None
+    success = False
+    try:
+        logintoken = request.json['loginToken']
+        tweetId = request.json['tweetId']
+        content = request.json.get('content')
+        imageUrl = request.json.get('imageUrl')
+        success, tweet = te.patch_tweet(logintoken, tweetId, content, imageUrl)
+        tweet_json = json.dumps(tweet, default=str)
+    except:
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+    if(success):
+        return Response(tweet_json, mimetype="application/json", status=200)
+    else:
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
