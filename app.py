@@ -81,6 +81,11 @@ def patch_tweet():
     return tweets.patch()
 
 
+@app.delete('/api/tweets')
+def delete_tweet():
+    return tweets.delete()
+
+
 # Checking to see if a mode was passed to the script
 if(len(sys.argv) > 1):
     mode = sys.argv[1]

@@ -54,3 +54,17 @@ def patch():
         return Response(tweet_json, mimetype="application/json", status=200)
     else:
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+
+
+def delete():
+    success = False
+    try:
+        logintoken = request.json['loginToken']
+        tweetId = request.json['tweetId']
+        success = te.delete_tweet(logintoken, tweetId)
+    except:
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+    if(success):
+        return Response(None, status=200)
+    else:
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)

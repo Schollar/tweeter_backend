@@ -108,3 +108,17 @@ def patch_tweet(loginToken, tweetId, content, imageUrl):
         print('Error running DB query')
     dbh.db_disconnect(conn, cursor)
     return True, tweet
+
+
+def delete_tweet(logintoken, tweetId):
+    conn, cursor = dbh.db_connect()
+    try:
+        cursor.execute(
+            "DELETE tweet FROM tweet inner join user_session on tweet.userId = user_session.user_id WHERE tweet.id = ? and logintoken = ? ", [tweetId, logintoken])
+        conn.commit()
+    except db.OperationalError:
+        print('Something went  wrong with the db!')
+    except db.ProgrammingError:
+        print('Error running DB query')
+    dbh.db_disconnect(conn, cursor)
+    return True
