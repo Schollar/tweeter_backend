@@ -25,3 +25,30 @@ def get_comments(tweetId):
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
         print('Error running DB query')
+
+
+def post_comment(logintoken, content, tweetId):
+    comment = {}
+    conn, cursor = dbh.db_connect()
+    userId = dbh.get_userId(logintoken)
+    try:
+        cursor.execute(
+            "INSERT INTO comment (user_id, content, tweet_id) VALUES (?, ?, ?)", [userId, content, tweetId])
+        conn.commit()
+        cursor.execute(
+            "SELECT comment.id, comment.tweet_id, comment.user_id, username, content, created_at FROM `user` inner join comment on comment.user_id = `user`.id WHERE content = ?", [content])
+        comment = cursor.fetchone()
+        comment = {
+            'commentId': comment[0],
+            'tweetId': comment[1],
+            'userId': comment[2],
+            'username': comment[3],
+            'content': comment[4],
+            'createdAt': comment[5]
+        }
+    except db.OperationalError:
+        print('Something went  wrong with the db!')
+    except db.ProgrammingError:
+        print('Error running DB query')
+    dbh.db_disconnect(conn, cursor)
+    return True, comment

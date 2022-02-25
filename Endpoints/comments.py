@@ -16,3 +16,20 @@ def get():
         return Response(comments_json, mimetype="application/json", status=200)
     else:
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+
+
+def post():
+    comment_json = None
+    success = False
+    try:
+        logintoken = request.json['loginToken']
+        content = request.json['content']
+        tweetId = request.json['tweetId']
+        success, comment = ci.post_comment(logintoken, content, tweetId)
+        comment_json = json.dumps(comment, default=str)
+    except:
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+    if(success):
+        return Response(comment_json, mimetype="application/json", status=200)
+    else:
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
