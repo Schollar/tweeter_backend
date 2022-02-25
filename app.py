@@ -11,7 +11,12 @@ import Endpoints.commentlikes as commentlikes
 import sys
 app = Flask(__name__)
 
-######### USER ENDPOINT ########
+# ENDPOINT README###$
+# These endpoint all create a function, which returns the
+# information from the actual function that is imported and called from another file.
+# All endpoints are split up into their own respective files for organizational sake.
+
+## USER ENDPOINT ##
 
 
 @app.get('/api/users')

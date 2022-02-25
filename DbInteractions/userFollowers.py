@@ -2,6 +2,8 @@
 import mariadb as db
 import DbInteractions.dbhandler as dbh
 
+# Function that will get users that follow a specific userId
+
 
 def get_followers(userId):
     follows_list = []
