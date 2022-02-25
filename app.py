@@ -5,6 +5,7 @@ import Endpoints.follows as follows
 import Endpoints.followers as followers
 import Endpoints.tweets as tweets
 import Endpoints.tweetLikes as tlikes
+import Endpoints.comments as comments
 
 import sys
 app = Flask(__name__)
@@ -102,6 +103,12 @@ def post_tweet_like():
 @app.delete('/api/tweet-likes')
 def delete_tweet_like():
     return tlikes.delete()
+
+
+#### COMMENTS ENDPOINT ####
+@app.get('/api/comments')
+def get_comments():
+    return comments.get()
 
 
 # Checking to see if a mode was passed to the script
