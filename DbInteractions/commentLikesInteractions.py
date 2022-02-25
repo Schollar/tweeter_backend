@@ -51,3 +51,17 @@ def post_comment_like(logintoken, commentId):
         print('Error running DB query')
     dbh.db_disconnect(conn, cursor)
     return True, like
+
+
+def delete_like(logintoken, commentId):
+    conn, cursor = dbh.db_connect()
+    try:
+        cursor.execute(
+            "DELETE comment_like FROM comment_like inner join user_session on comment_like.user_id = user_session.user_id WHERE comment_id = ? and logintoken = ?", [commentId, logintoken])
+        conn.commit()
+    except db.OperationalError:
+        print('Something went  wrong with the db!')
+    except db.ProgrammingError:
+        print('Error running DB query')
+    dbh.db_disconnect(conn, cursor)
+    return True

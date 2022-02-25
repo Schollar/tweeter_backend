@@ -139,6 +139,11 @@ def post_comment_like():
     return commentlikes.post()
 
 
+@app.delete('/api/comment-likes')
+def delete_comment_like():
+    return commentlikes.delete()
+
+
 # Checking to see if a mode was passed to the script
 if(len(sys.argv) > 1):
     mode = sys.argv[1]
