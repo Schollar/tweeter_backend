@@ -116,6 +116,11 @@ def post_comment():
     return comments.post()
 
 
+@app.patch('/api/comments')
+def patch_comment():
+    return comments.patch()
+
+
 # Checking to see if a mode was passed to the script
 if(len(sys.argv) > 1):
     mode = sys.argv[1]

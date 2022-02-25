@@ -33,3 +33,20 @@ def post():
         return Response(comment_json, mimetype="application/json", status=200)
     else:
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+
+
+def patch():
+    comment_json = None
+    success = False
+    try:
+        logintoken = request.json['loginToken']
+        commentId = request.json['commentId']
+        content = request.json['content']
+        success, comment = ci.patch_comment(logintoken, commentId, content)
+        comment_json = json.dumps(comment, default=str)
+    except:
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+    if(success):
+        return Response(comment_json, mimetype="application/json", status=200)
+    else:
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
