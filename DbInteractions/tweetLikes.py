@@ -42,3 +42,17 @@ def post_like(logintoken, tweetId):
         print('Error running DB query')
     dbh.db_disconnect(conn, cursor)
     return True
+
+
+def delete_like(logintoken, tweetId):
+    conn, cursor = dbh.db_connect()
+    try:
+        cursor.execute(
+            "DELETE tweet_like FROM tweet_like inner join user_session on tweet_like.user_id = user_session.user_id WHERE tweet_id = ? and logintoken = ?", [tweetId, logintoken])
+        conn.commit()
+    except db.OperationalError:
+        print('Something went  wrong with the db!')
+    except db.ProgrammingError:
+        print('Error running DB query')
+    dbh.db_disconnect(conn, cursor)
+    return True

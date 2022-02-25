@@ -99,6 +99,11 @@ def post_tweet_like():
     return tlikes.post()
 
 
+@app.delete('/api/tweet-likes')
+def delete_tweet_like():
+    return tlikes.delete()
+
+
 # Checking to see if a mode was passed to the script
 if(len(sys.argv) > 1):
     mode = sys.argv[1]
