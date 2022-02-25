@@ -27,3 +27,27 @@ def get_comment_likes(commentId):
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
         print('Error running DB query')
+
+
+def post_comment_like(logintoken, commentId):
+    like = {}
+    conn, cursor = dbh.db_connect()
+    userId = dbh.get_userId(logintoken)
+    try:
+        cursor.execute(
+            "INSERT INTO comment_like (user_id, comment_id) VALUES (?, ?)", [userId, commentId])
+        conn.commit()
+        cursor.execute("SELECT comment_id, user_id, username FROM comment_like inner join `user` on `user`.id = user_id WHERE comment_id = ? and user_id = ?", [
+                       commentId, userId])
+        like = cursor.fetchone()
+        like = {
+            'commentId': like[0],
+            'userId': like[1],
+            'username': like[2],
+        }
+    except db.OperationalError:
+        print('Something went  wrong with the db!')
+    except db.ProgrammingError:
+        print('Error running DB query')
+    dbh.db_disconnect(conn, cursor)
+    return True, like

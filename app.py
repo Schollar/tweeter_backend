@@ -134,6 +134,11 @@ def get_comment_likes():
     return commentlikes.get()
 
 
+@app.post('/api/comment-likes')
+def post_comment_like():
+    return commentlikes.post()
+
+
 # Checking to see if a mode was passed to the script
 if(len(sys.argv) > 1):
     mode = sys.argv[1]
