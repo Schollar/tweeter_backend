@@ -50,11 +50,8 @@ def get_tweets(userId):
 def post_tweet(logintoken, content, imageUrl):
     tweet = {}
     conn, cursor = dbh.db_connect()
+    userId = dbh.get_userId(logintoken)
     try:
-        cursor.execute(
-            "SELECT `user`.id FROM user inner join user_session on `user`.id = user_session.user_id WHERE logintoken = ?", [logintoken])
-        userId = cursor.fetchone()
-        userId = userId[0]
         cursor.execute(
             "INSERT INTO tweet (userId, content, imageUrl) VALUES (?, ?, ?)", [userId, content, imageUrl])
         conn.commit()

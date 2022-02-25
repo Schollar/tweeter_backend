@@ -27,3 +27,18 @@ def get_tweet_likes(tweetId):
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
         print('Error running DB query')
+
+
+def post_like(logintoken, tweetId):
+    conn, cursor = dbh.db_connect()
+    userId = dbh.get_userId(logintoken)
+    try:
+        cursor.execute(
+            "INSERT INTO tweet_like (tweet_id, user_id) VALUES (?, ?)", [tweetId, userId])
+        conn.commit()
+    except db.OperationalError:
+        print('Something went  wrong with the db!')
+    except db.ProgrammingError:
+        print('Error running DB query')
+    dbh.db_disconnect(conn, cursor)
+    return True

@@ -16,3 +16,17 @@ def get():
         return Response(likes_json, mimetype="application/json", status=200)
     else:
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+
+
+def post():
+    success = False
+    try:
+        logintoken = request.json['loginToken']
+        tweetId = request.json['tweetId']
+        success = tl.post_like(logintoken, tweetId)
+    except:
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+    if(success):
+        return Response(None, status=200)
+    else:
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)

@@ -54,3 +54,18 @@ def get_password(password, email=None, username=None, logintoken=None):
         print('Error running DB query')
     db_disconnect(conn, cursor)
     return pass_hash
+
+
+def get_userId(logintoken):
+    conn, cursor = db_connect()
+    try:
+        cursor.execute(
+            "SELECT `user`.id FROM user inner join user_session on `user`.id = user_session.user_id WHERE logintoken = ?", [logintoken])
+        userId = cursor.fetchone()
+        userId = userId[0]
+        db_disconnect(conn, cursor)
+        return userId
+    except db.OperationalError:
+        print('Something went  wrong with the db!')
+    except db.ProgrammingError:
+        print('Error running DB query')

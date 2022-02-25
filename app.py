@@ -94,6 +94,11 @@ def get_tweet_likes():
     return tlikes.get()
 
 
+@app.post('/api/tweet-likes')
+def post_tweet_like():
+    return tlikes.post()
+
+
 # Checking to see if a mode was passed to the script
 if(len(sys.argv) > 1):
     mode = sys.argv[1]
