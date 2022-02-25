@@ -80,3 +80,17 @@ def patch_comment(loginToken, commentId, content):
         print('Error running DB query')
     dbh.db_disconnect(conn, cursor)
     return True, comment
+
+
+def delete_comment(logintoken, commentId):
+    conn, cursor = dbh.db_connect()
+    try:
+        cursor.execute(
+            "DELETE comment FROM comment inner join user_session on comment.user_id = user_session.user_id WHERE comment.id = ? and logintoken = ? ", [commentId, logintoken])
+        conn.commit()
+    except db.OperationalError:
+        print('Something went  wrong with the db!')
+    except db.ProgrammingError:
+        print('Error running DB query')
+    dbh.db_disconnect(conn, cursor)
+    return True

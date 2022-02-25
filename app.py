@@ -121,6 +121,11 @@ def patch_comment():
     return comments.patch()
 
 
+@app.delete('/api/comments')
+def delete_comment():
+    return comments.delete()
+
+
 # Checking to see if a mode was passed to the script
 if(len(sys.argv) > 1):
     mode = sys.argv[1]

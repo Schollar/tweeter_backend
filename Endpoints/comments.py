@@ -50,3 +50,17 @@ def patch():
         return Response(comment_json, mimetype="application/json", status=200)
     else:
         return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+
+
+def delete():
+    success = False
+    try:
+        logintoken = request.json['loginToken']
+        commentId = request.json['commentId']
+        success = ci.delete_comment(logintoken, commentId)
+    except:
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
+    if(success):
+        return Response(None, status=200)
+    else:
+        return Response("Something went wrong getting the list of users from the DB!", mimetype="application/json", status=400)
