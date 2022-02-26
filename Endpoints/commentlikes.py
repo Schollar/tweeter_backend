@@ -10,7 +10,7 @@ def get():
     likes_json = None
     success = False
     try:
-        commentId = request.args('commentId')
+        commentId = request.args['commentId']
         success, like_list = cl.get_comment_likes(commentId)
         likes_json = json.dumps(like_list, default=str)
     except:
