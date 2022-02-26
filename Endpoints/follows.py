@@ -25,7 +25,7 @@ def get():
 def post():
     success = False
     try:
-        logintoken = request.json['logintoken']
+        logintoken = request.json['loginToken']
         follow_id = request.json['followId']
         success = uf.post_follow(logintoken, follow_id)
     except:
@@ -41,7 +41,7 @@ def post():
 def delete():
     success = False
     try:
-        logintoken = request.json['logintoken']
+        logintoken = request.json['loginToken']
         followId = request.json['followId']
         success = uf.delete_follow(logintoken, followId)
     except:

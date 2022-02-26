@@ -26,7 +26,7 @@ def post():
     tweet_json = None
     success = False
     try:
-        logintoken = request.json['logintoken']
+        logintoken = request.json['loginToken']
         content = request.json['content']
         imageUrl = request.json.get('imageUrl')
         success, tweet = te.post_tweet(logintoken, content, imageUrl)

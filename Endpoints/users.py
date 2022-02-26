@@ -19,7 +19,7 @@ def get():
     users_json = None
     success = False
     try:
-        user_id = request.args.get('user_id')
+        user_id = request.args.get('userId')
         success, user_list = ue.get_users(user_id)
         users_json = json.dumps(user_list, default=str)
     except:
@@ -37,7 +37,7 @@ def patch():
     user_json = None
     success = False
     try:
-        loginToken = request.json['logintoken']
+        loginToken = request.json['loginToken']
         bio = request.json.get('bio')
         birthdate = request.json.get('birthdate')
         imageUrl = request.json.get('imageUrl')
