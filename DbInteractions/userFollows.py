@@ -2,11 +2,14 @@
 import mariadb as db
 import DbInteractions.dbhandler as dbh
 
+# Function to get the followers of a specific user. Requires a userId as an argument.
+
 
 def get_follows(userId):
     follows_list = []
     conn, cursor = dbh.db_connect()
     try:
+        # Select statement to select the users information that follow the userId sent, save it to a variable before changing the data to an object, disconnecting and returning the data.
         cursor.execute(
             "SELECT `user`.id, email, username, bio, birthdate, imageUrl, bannerUrl FROM follow inner join `user` on follow.follow_id = `user`.id WHERE user_id = ?", [userId])
         users = cursor.fetchall()
@@ -28,14 +31,14 @@ def get_follows(userId):
     dbh.db_disconnect(conn, cursor)
     return True, follows_list
 
+# Function to create a new follow on a user, login token and follow id must be valid(user must be logged in and user to follow must exist)
+
 
 def post_follow(logintoken, followId):
     conn, cursor = dbh.db_connect()
     try:
-        cursor.execute(
-            "SELECT `user`.id FROM user inner join user_session on `user`.id = user_session.user_id WHERE logintoken = ?", [logintoken])
-        userId = cursor.fetchone()
-        userId = userId[0]
+        # Using the get userid helper fucntion to get the userId from the logged in user. Insert statement to insert follow into DB. Commit, disconnect and return true
+        userId = dbh.get_userId(logintoken)
         cursor.execute(
             "INSERT INTO follow (user_id, follow_id) VALUES (?, ?)", [userId, followId])
         conn.commit()
@@ -46,15 +49,14 @@ def post_follow(logintoken, followId):
     dbh.db_disconnect(conn, cursor)
     return True
 
+# Function to delete a follow. same arguments as function above, runs a Delete statement to delete follow relashionship. Commit, disconnect and return true.
+
 
 def delete_follow(logintoken, followId):
     userId = None
     conn, cursor = dbh.db_connect()
     try:
-        cursor.execute(
-            "SELECT `user`.id FROM user inner join user_session on `user`.id = user_session.user_id WHERE logintoken = ?", [logintoken])
-        userId = cursor.fetchone()
-        userId = userId[0]
+        userId = dbh.get_userId(logintoken)
         cursor.execute(
             "DELETE FROM follow WHERE user_id = ? and follow_id = ?", [userId, followId])
         conn.commit()
