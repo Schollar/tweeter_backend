@@ -13,7 +13,7 @@ def get_users(userId):
         # Checking to see if userId is none, if not we return the information about that specific user
         if(userId != None):
             cursor.execute(
-                "SELECT id, email, username, bio, birthdate, imageUrl, bannerUrl FROM user WHERE id = ?", [userId])
+                "SELECT id, email, username, bio, birthdate, imageUrl, bannerUrl FROM `user` WHERE id = ?", [userId])
             users = cursor.fetchone()
             users = {
                 'userId': users[0],
