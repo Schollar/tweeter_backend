@@ -1,5 +1,6 @@
 import mariadb as db
 import DbInteractions.dbhandler as dbh
+import traceback
 
 # Function get all comments from a specific tweet. tweetId is taken as an argument
 
@@ -23,12 +24,17 @@ def get_comments(tweetId):
                 'content': comment[4],
                 'createdAt': comment[5]
             })
-        dbh.db_disconnect(conn, cursor)
-        return True, comments_list
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
+    dbh.db_disconnect(conn, cursor)
+    return True, comments_list
 
 # Function that creates a new comment on a tweet. takes logintoken, content and tweetId as arguments
 
@@ -55,9 +61,14 @@ def post_comment(logintoken, content, tweetId):
             'createdAt': comment[5]
         }
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
     dbh.db_disconnect(conn, cursor)
     return True, comment
 
@@ -87,9 +98,14 @@ def patch_comment(loginToken, commentId, content):
             'createdAt': comment[5]
         }
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
     dbh.db_disconnect(conn, cursor)
     return True, comment
 
@@ -104,8 +120,13 @@ def delete_comment(logintoken, commentId):
             "DELETE comment FROM comment inner join user_session on comment.user_id = user_session.user_id WHERE comment.id = ? and logintoken = ? ", [commentId, logintoken])
         conn.commit()
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
     dbh.db_disconnect(conn, cursor)
     return True

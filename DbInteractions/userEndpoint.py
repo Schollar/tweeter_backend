@@ -1,6 +1,7 @@
 import mariadb as db
 import DbInteractions.dbhandler as dbh
 import DbInteractions.userLogin as ul
+import traceback
 
 # Function that returns all users or a specific user based on the userId value
 
@@ -45,9 +46,14 @@ def get_users(userId):
             dbh.db_disconnect(conn, cursor)
             return True, users_objects
     except db.OperationalError:
-        print('Something went  wrong with the db!')
+        traceback.print_exc()
+        print('Something went wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
 
 # Function that will change information based on if the values of the arguments are None or not, we check one by one and update one by one, which is less than ideal.
 
@@ -94,9 +100,14 @@ def patch_user(loginToken, bio, birthdate, imageUrl, bannerUrl, email, username)
             'bannerUrl': user[6]
         }
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
     dbh.db_disconnect(conn, cursor)
     return True, user
 
@@ -139,9 +150,14 @@ def post_user(bio, birthdate, imageUrl, bannerUrl, email, username, pass_hash, s
             'loginToken': login_token
         }
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
     dbh.db_disconnect(conn, cursor)
     return True, user
 
@@ -156,8 +172,13 @@ def delete_user(loginToken, pass_hash):
             "DELETE `user` FROM `user` inner join user_session on `user`.id = user_session.user_id WHERE password = ? and logintoken = ? ", [pass_hash, loginToken])
         conn.commit()
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
     dbh.db_disconnect(conn, cursor)
     return True

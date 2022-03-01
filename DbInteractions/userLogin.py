@@ -1,5 +1,6 @@
 import mariadb as db
 import DbInteractions.dbhandler as dbh
+import traceback
 
 # Function to delete a login token(log a user out)
 
@@ -12,9 +13,14 @@ def delete_login(loginToken):
             "DELETE FROM user_session WHERE logintoken = ? ", [loginToken])
         conn.commit()
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
     dbh.db_disconnect(conn, cursor)
     return True
 
@@ -56,8 +62,13 @@ def post_login(email, username, pass_hash):
             'loginToken': user[7]
         }
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
     dbh.db_disconnect(conn, cursor)
     return True, user

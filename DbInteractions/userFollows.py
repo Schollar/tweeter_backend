@@ -1,6 +1,7 @@
 
 import mariadb as db
 import DbInteractions.dbhandler as dbh
+import traceback
 
 # Function to get the followers of a specific user. Requires a userId as an argument.
 
@@ -25,9 +26,14 @@ def get_follows(userId):
                     'bannerUrl': user[6]
                 })
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
     dbh.db_disconnect(conn, cursor)
     return True, follows_list
 
@@ -43,9 +49,14 @@ def post_follow(logintoken, followId):
             "INSERT INTO follow (user_id, follow_id) VALUES (?, ?)", [userId, followId])
         conn.commit()
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
     dbh.db_disconnect(conn, cursor)
     return True
 
@@ -61,8 +72,13 @@ def delete_follow(logintoken, followId):
             "DELETE FROM follow WHERE user_id = ? and follow_id = ?", [userId, followId])
         conn.commit()
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
     dbh.db_disconnect(conn, cursor)
     return True

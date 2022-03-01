@@ -1,6 +1,7 @@
 import mariadb as db
 import DbInteractions.dbcreds as dbcreds
 import hashlib
+import traceback
 
 # Connect function that starts a DB connection and creates a cursor
 
@@ -54,9 +55,14 @@ def get_password(password, email=None, username=None, logintoken=None):
         password = salt[0] + password
         pass_hash = hashlib.sha512(password.encode()).hexdigest()
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
     # Disconnect and return hashed+salted password
     db_disconnect(conn, cursor)
     return pass_hash
@@ -73,9 +79,15 @@ def get_userId(logintoken):
         # Save Id to variable, but since it defaults to a list, we then save the variable equal to the list index item 0. Disconnect and return userId
         userId = cursor.fetchone()
         userId = userId[0]
-        db_disconnect(conn, cursor)
-        return userId
+
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
+    db_disconnect(conn, cursor)
+    return userId

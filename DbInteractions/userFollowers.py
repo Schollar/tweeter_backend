@@ -1,6 +1,7 @@
 
 import mariadb as db
 import DbInteractions.dbhandler as dbh
+import traceback
 
 # Function that will get users that follow a specific userId
 
@@ -24,8 +25,13 @@ def get_followers(userId):
                     'bannerUrl': user[6]
                 })
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
     dbh.db_disconnect(conn, cursor)
     return True, follows_list

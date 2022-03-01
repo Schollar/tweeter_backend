@@ -1,5 +1,6 @@
 import mariadb as db
 import DbInteractions.dbhandler as dbh
+import traceback
 
 # Function that gets either all tweets or a specific user's tweets based on userId value
 
@@ -25,8 +26,6 @@ def get_tweets(userId):
                     'userImageUrl': tweet[6]
 
                 })
-            dbh.db_disconnect(conn, cursor)
-            return True, tweets_list
         else:
             # If userId value is None, we select all tweets, save them into a list and then change the list to be a list of objects. Disconnect and return the data.
             cursor.execute(
@@ -41,14 +40,18 @@ def get_tweets(userId):
                     'createdAt': tweet[4],
                     'tweetImageUrl': tweet[5],
                     'userImageUrl': tweet[6]
-
                 })
-            dbh.db_disconnect(conn, cursor)
-            return True, tweets_list
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
+    dbh.db_disconnect(conn, cursor)
+    return True, tweets_list
 
 # Function to create a new tweet, takes in a login token, content and optional imageUrl
 
@@ -76,9 +79,14 @@ def post_tweet(logintoken, content, imageUrl):
             'imageUrl': tweet[6]
         }
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
     dbh.db_disconnect(conn, cursor)
     return True, tweet
 
@@ -115,9 +123,14 @@ def patch_tweet(loginToken, tweetId, content, imageUrl):
             'imageUrl': tweet[2],
         }
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
     dbh.db_disconnect(conn, cursor)
     return True, tweet
 
@@ -132,8 +145,13 @@ def delete_tweet(logintoken, tweetId):
             "DELETE tweet FROM tweet inner join user_session on tweet.userId = user_session.user_id WHERE tweet.id = ? and logintoken = ? ", [tweetId, logintoken])
         conn.commit()
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
     dbh.db_disconnect(conn, cursor)
     return True

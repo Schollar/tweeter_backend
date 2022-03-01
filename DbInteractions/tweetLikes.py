@@ -1,5 +1,6 @@
 import mariadb as db
 import DbInteractions.dbhandler as dbh
+import traceback
 
 # Function that will get either all tweets likes or a specific tweet's likes.
 
@@ -26,12 +27,17 @@ def get_tweet_likes(tweetId):
                 'userId': like[1],
                 'username': like[2],
             })
-        dbh.db_disconnect(conn, cursor)
-        return True, like_list
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
+    dbh.db_disconnect(conn, cursor)
+    return True, like_list
 
 # Function that will create a new like for a tweet. Takes in a logintoken and tweetId
 
@@ -46,9 +52,14 @@ def post_like(logintoken, tweetId):
             "INSERT INTO tweet_like (tweet_id, user_id) VALUES (?, ?)", [tweetId, userId])
         conn.commit()
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
     dbh.db_disconnect(conn, cursor)
     return True
 
@@ -63,8 +74,13 @@ def delete_like(logintoken, tweetId):
             "DELETE tweet_like FROM tweet_like inner join user_session on tweet_like.user_id = user_session.user_id WHERE tweet_id = ? and logintoken = ?", [tweetId, logintoken])
         conn.commit()
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
     dbh.db_disconnect(conn, cursor)
     return True

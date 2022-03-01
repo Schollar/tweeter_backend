@@ -1,5 +1,6 @@
 import mariadb as db
 import DbInteractions.dbhandler as dbh
+import traceback
 
 # Function to get comment likes. Takes in commentId.
 
@@ -28,14 +29,18 @@ def get_comment_likes(commentId):
                 'userId': like[1],
                 'username': like[2],
             })
-        # Disconnect and return the information we just grabbed from the DB
-        dbh.db_disconnect(conn, cursor)
-        return True, like_list
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
-
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
+        # Disconnect and return the information we just grabbed from the DB
+    dbh.db_disconnect(conn, cursor)
+    return True, like_list
 # Function that creates a new like for a comment. Takes in a login token and commentId as arguments
 
 
@@ -60,9 +65,14 @@ def post_comment_like(logintoken, commentId):
             'username': like[2],
         }
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
     # Disconnect and return the information
     dbh.db_disconnect(conn, cursor)
     return True, like
@@ -78,9 +88,14 @@ def delete_like(logintoken, commentId):
             "DELETE comment_like FROM comment_like inner join user_session on comment_like.user_id = user_session.user_id WHERE comment_id = ? and logintoken = ?", [commentId, logintoken])
         conn.commit()
     except db.OperationalError:
+        traceback.print_exc()
         print('Something went  wrong with the db!')
     except db.ProgrammingError:
+        traceback.print_exc()
         print('Error running DB query')
+    except:
+        traceback.print_exc()
+        print("Something unexpected went wrong")
     dbh.db_disconnect(conn, cursor)
     # Return true to signify success
     return True
