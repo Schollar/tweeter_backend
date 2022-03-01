@@ -164,6 +164,6 @@ if(mode == "testing"):
 elif(mode == "production"):
     print('Running in production mode')
     import bjoern  # type: ignore
-    bjoern.run(app, "0.0.0.0", 5005)
+    bjoern.run(app, "0.0.0.0", 5006)
 else:
     print('Please Run in either testing or production')
