@@ -1,6 +1,7 @@
 import mariadb as db
 import DbInteractions.dbhandler as dbh
 import traceback
+import secrets
 
 # Function to delete a login token(log a user out)
 
@@ -44,8 +45,9 @@ def post_login(email, username, pass_hash):
             userId = cursor.fetchone()
             userId = userId[0]
         # Insert statement to insert a session to the user_session table based on the userId we get above. Commit the changes
+        token = secrets.token_urlsafe(40)
         cursor.execute(
-            "INSERT INTO user_session (user_id) VALUES (?)", [userId])
+            "INSERT INTO user_session (user_id, logintoken) VALUES (?, ?)", [userId, token])
         conn.commit()
         # Select statement to grab information about the user, aswell as the just created login token, save data to variable change it to an object and return the data
         cursor.execute(
